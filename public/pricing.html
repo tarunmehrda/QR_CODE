@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiturai Pro - Unlock Your Best Body With AI 💪</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .plans {
+            padding: 30px 20px;
+        }
+        
+        .plan {
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .plan:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .plan.popular {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #fff5f5, #fff);
+        }
+        
+        .plan.popular::before {
+            content: "💥 Best Value";
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .plan-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .plan-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .plan-features {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .plan-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .plan-button.free {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+        
+        .plan-button.pro {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .plan-button.lifetime {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .plan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .features-list {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .features-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .feature::before {
+            content: "✅";
+            margin-right: 10px;
+        }
+        
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        
+        .payment-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .qr-code {
+            margin: 20px 0;
+        }
+        
+        .qr-code img {
+            max-width: 250px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+        }
+        
+        .payment-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .payment-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .enable-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .disable-btn {
+            background: #f44336;
+            color: white;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Unlock Your Best Body With AI 💪</h1>
+            <p>Choose your fitness journey</p>
+        </div>
+        
+        <div class="plans">
+            <div class="plan">
+                <div class="plan-header">
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price">₹0</div>
+                </div>
+                <div class="plan-features">Basic features included</div>
+                <button class="plan-button free" onclick="selectPlan('free')">Continue with Basic</button>
+            </div>
+            
+            <div class="plan">
+                <div class="plan-header">
+                    <div class="plan-name">Weekly Pro</div>
+                    <div class="plan-price">₹49/week</div>
+                </div>
+                <div class="plan-features">Starter Plan - Low entry</div>
+                <button class="plan-button pro" onclick="selectPlan('weekly', 49)">Start Weekly Pro</button>
+            </div>
+            
+            <div class="plan popular">
+                <div class="plan-header">
+                    <div class="plan-name">Monthly Pro</div>
+                    <div class="plan-price">₹149/month</div>
+                </div>
+                <div class="plan-features">Save 25% - Most Popular</div>
+                <button class="plan-button pro" onclick="selectPlan('monthly', 149)">Start Monthly Pro</button>
+            </div>
+            
+            <div class="plan">
+                <div class="plan-header">
+                    <div class="plan-name">Lifetime Pro</div>
+                    <div class="plan-price">₹499</div>
+                </div>
+                <div class="plan-features">One-Time Payment - Big Discount</div>
+                <button class="plan-button lifetime" onclick="selectPlan('lifetime', 499)">Go Lifetime Pro</button>
+            </div>
+        </div>
+        
+        <div class="features-list">
+            <h3>🎯 Pro Features Unlocked:</h3>
+            <div class="feature">🧠 AI Diet Coach (GPT-4o powered)</div>
+            <div class="feature">📊 Personalized Indian meal plans</div>
+            <div class="feature">🥗 AI food analyzer (image + text)</div>
+            <div class="feature">🔥 Streak tracking & progress analytics</div>
+            <div class="feature">📆 Smart meal scheduling</div>
+            <div class="feature">🧴 Fitness + hydration reminders</div>
+            <div class="feature">🎤 AI voice assistant (coming soon)</div>
+        </div>
+    </div>
+    
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-content">
+            <button class="close-btn" onclick="closePayment()">&times;</button>
+            <h3 id="paymentTitle">Complete Your Payment</h3>
+            <p id="paymentAmount"></p>
+            
+            <div class="qr-code">
+                <img id="qrImage" src="" alt="QR Code">
+            </div>
+            
+            <p>Scan QR code or click the UPI link below:</p>
+            <a id="upiLink" href="" target="_blank" style="color: #667eea; font-weight: bold;">Open in UPI App</a>
+            
+            <div class="payment-buttons">
+                <button class="payment-btn enable-btn" onclick="enablePayment()">✅ Payment Done</button>
+                <button class="payment-btn disable-btn" onclick="disablePayment()">❌ Cancel Payment</button>
+            </div>
+            
+            <div id="paymentStatus" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPlan = null;
+        let paymentEnabled = false;
+
+        function selectPlan(planType, amount = 0) {
+            if (planType === 'free') {
+                alert('🎉 Welcome to Fiturai Free! You can upgrade anytime.');
+                return;
+            }
+            
+            currentPlan = { type: planType, amount: amount };
+            generatePayment(planType, amount);
+        }
+
+        async function generatePayment(planType, amount) {
+            try {
+                const response = await fetch('/generate-upi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        name: `Fiturai ${planType} Plan`, 
+                        amount: amount 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showPaymentModal(data, planType, amount);
+                } else {
+                    alert('Error generating payment: ' + data.error);
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            }
+        }
+
+        function showPaymentModal(paymentData, planType, amount) {
+            document.getElementById('paymentTitle').textContent = `Fiturai ${planType.charAt(0).toUpperCase() + planType.slice(1)} Pro`;
+            document.getElementById('paymentAmount').textContent = `Amount: ₹${amount}`;
+            document.getElementById('qrImage').src = paymentData.qrCode;
+            document.getElementById('upiLink').href = paymentData.upiLink;
+            document.getElementById('paymentModal').style.display = 'block';
+            
+            // Reset payment status
+            paymentEnabled = false;
+            updatePaymentStatus();
+        }
+
+        function closePayment() {
+            document.getElementById('paymentModal').style.display = 'none';
+            currentPlan = null;
+            paymentEnabled = false;
+        }
+
+        async function enablePayment() {
+            paymentEnabled = true;
+            updatePaymentStatus();
+            
+            try {
+                // Call payment success endpoint
+                const response = await fetch('/payment-success', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        planType: currentPlan.type,
+                        amount: currentPlan.amount,
+                        userEmail: 'user@example.com' // Replace with actual user email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Show success message with plan details
+                    showSuccessMessage(data);
+                    closePayment();
+                } else {
+                    alert('Payment verification failed: ' + (data.error || 'Unknown error'));
+                    paymentEnabled = false;
+                    updatePaymentStatus();
+                }
+            } catch (error) {
+                alert('Error processing payment: ' + error.message);
+                paymentEnabled = false;
+                updatePaymentStatus();
+            }
+        }
+
+        function showSuccessMessage(data) {
+            const successHtml = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 2000;
+                ">
+                    <div style="
+                        background: white;
+                        border-radius: 20px;
+                        padding: 40px;
+                        max-width: 400px;
+                        text-align: center;
+                        animation: slideIn 0.5s ease;
+                    ">
+                        <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+                        <h2 style="color: #4CAF50; margin-bottom: 15px;">Payment Successful!</h2>
+                        <p style="margin-bottom: 20px; color: #666;">${data.message}</p>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <strong>Transaction ID:</strong><br>
+                            <code style="color: #667eea;">${data.transactionId}</code>
+                        </div>
+                        <div style="text-align: left; margin-bottom: 20px;">
+                            <strong>✅ Features Activated:</strong>
+                            ${data.planDetails.features.map(feature => `<div style="margin: 5px 0;">${feature}</div>`).join('')}
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="
+                            background: #4CAF50;
+                            color: white;
+                            border: none;
+                            padding: 15px 30px;
+                            border-radius: 10px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">Continue to App</button>
+                    </div>
+                </div>
+                <style>
+                    @keyframes slideIn {
+                        from { transform: translateY(-50px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', successHtml);
+        }
+
+        function disablePayment() {
+            paymentEnabled = false;
+            updatePaymentStatus();
+            closePayment();
+        }
+
+        function updatePaymentStatus() {
+            const statusDiv = document.getElementById('paymentStatus');
+            if (paymentEnabled) {
+                statusDiv.textContent = '✅ Payment Processing...';
+                statusDiv.style.color = '#4CAF50';
+            } else {
+                statusDiv.textContent = '⏳ Waiting for payment confirmation';
+                statusDiv.style.color = '#ff9800';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePayment();
+            }
+        });
+    </script>
+</body>
+</html>
