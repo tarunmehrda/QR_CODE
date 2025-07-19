@@ -119,8 +119,15 @@ app.get('/subscription-status/:userId', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '192.168.124.246', () => {
-  console.log(`✅ Server running on:`);
-  console.log(`- Local: http://192.168.124.246:${PORT}`);
-  console.log(`- Android Emulator: http://10.0.2.2:${PORT}`);
+const HOST = process.env.NODE_ENV === 'production' ? undefined : '192.168.124.246';
+
+app.listen(PORT, HOST, () => {
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🌐 Production URL available`);
+  } else {
+    console.log(`✅ Server running on:`);
+    console.log(`- Local: http://192.168.124.246:${PORT}`);
+    console.log(`- Android Emulator: http://10.0.2.2:${PORT}`);
+  }
 });
