@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static('public'));
 
-let STATIC_UPI_ID = '9560448066@ptyes'; // 💰 Always send payment here
+let STATIC_UPI_ID = '9462153613@axl'; // 💰 Always send payment here
 
 // In-memory storage for demo (use database in production)
 const pendingPayments = new Map();
@@ -33,15 +33,15 @@ app.post('/generate-upi', async (req, res) => {
   }
 
   // Validate amount
-  const validAmounts = ['1', '2', '3'];
+  const validAmounts = ['49', '149', '499'];
   if (!validAmounts.includes(amount)) {
-    return res.status(400).json({ error: 'Invalid amount. Only ₹1, ₹2, or ₹3 are allowed.' });
+    return res.status(400).json({ error: 'Invalid amount. Only ₹49/week, ₹149/month, or ₹499/lifetime are allowed.' });
   }
 
   // Validate plan type
-  const validPlans = ['basic', 'pro', 'premium'];
+  const validPlans = ['weekly', 'monthly', 'lifetime'];
   if (!validPlans.includes(planType)) {
-    return res.status(400).json({ error: 'Invalid plan type. Only basic, pro, or premium are allowed.' });
+    return res.status(400).json({ error: 'Invalid plan type. Only weekly, monthly, or lifetime are allowed.' });
   }
 
   // Validate phone number
@@ -51,14 +51,14 @@ app.post('/generate-upi', async (req, res) => {
 
   // Create UPI link with proper encoding and single UPI ID
   const upiIds = [
-    '9560448066@ptyes'
+    '9462153613@axl'
   ];
   
   // Use the primary UPI ID
   const selectedUpiId = STATIC_UPI_ID;
   
   // Create UPI link with all necessary parameters
-  const upiLink = `upi://pay?pa=${selectedUpiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=Fiturai%20${planType}%20Plan&mc=0000&tr=${Date.now()}`;
+  const upiLink = `upi://pay?pa=${selectedUpiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=Fiturai%20₹${amount}&mc=0000&tr=${Date.now()}`;
 
   try {
     const qrCode = await qrcode.toDataURL(upiLink, {
@@ -89,7 +89,7 @@ app.post('/generate-upi', async (req, res) => {
       paymentSessionId,
       upiLink,
       qrCode, // base64 PNG QR
-      message: `Please pay ₹${amount} to ${selectedUpiId} for ${planType} plan`,
+      message: `Please pay ₹${amount} to ${selectedUpiId}`,
       instructions: [
         '1. Scan the QR code or click the UPI link',
         '2. Complete the payment using any UPI app (Paytm, PhonePe, Google Pay, etc.)',
@@ -100,7 +100,7 @@ app.post('/generate-upi', async (req, res) => {
         upiId: selectedUpiId,
         amount: amount,
         planType: planType,
-        description: `Fiturai ${planType} Plan`,
+        description: `Fiturai ₹${amount}`,
         alternativeUpiIds: upiIds.filter(id => id !== selectedUpiId)
       }
     });
@@ -141,14 +141,14 @@ app.post('/verify-transaction', async (req, res) => {
     // Calculate expiry date (7 days for basic, 15 days for pro, 30 days for premium)
     let expiryDays;
     switch(pendingPayment.planType) {
-      case 'basic':
+      case 'weekly':
         expiryDays = 7;
         break;
-      case 'pro':
-        expiryDays = 15;
+      case 'monthly':
+        expiryDays = 30; // Assuming 30 days for monthly
         break;
-      case 'premium':
-        expiryDays = 30;
+      case 'lifetime':
+        expiryDays = 365; // Assuming 365 days for lifetime
         break;
       default:
         expiryDays = 7;
@@ -164,8 +164,7 @@ app.post('/verify-transaction', async (req, res) => {
       transactionId,
       activatedAt: new Date().toISOString(),
       expiresAt: expiresAt.toISOString(),
-      status: 'active',
-      features: getPlanFeatures(pendingPayment.planType)
+      status: 'active'
     });
     
     // Remove from pending payments
@@ -175,7 +174,7 @@ app.post('/verify-transaction', async (req, res) => {
     
     res.json({
       success: true,
-      message: `Welcome to Fiturai ${pendingPayment.planType} Pro!`,
+      message: `Welcome to Fiturai!`,
       subscription: {
         subscriptionId,
         planType: pendingPayment.planType,
@@ -183,8 +182,7 @@ app.post('/verify-transaction', async (req, res) => {
         transactionId,
         activatedAt: new Date().toISOString(),
         expiresAt: expiresAt.toISOString(),
-        status: 'active',
-        features: getPlanFeatures(pendingPayment.planType)
+        status: 'active'
       }
     });
   } else {
@@ -228,54 +226,11 @@ async function verifyTransactionWithGateway(transactionId, paymentDetails) {
   return isValid;
 }
 
-// Helper function to get plan features
-function getPlanFeatures(planType) {
-  const basicFeatures = [
-    '🧠 AI Diet Coach (Basic)',
-    '📊 Basic meal plans', 
-    '🥗 Food analyzer (text only)',
-    '🔥 Basic progress tracking'
-  ];
-  
-  const proFeatures = [
-    '🧠 AI Diet Coach (Advanced)',
-    '📊 Advanced meal plans & analytics', 
-    '🥗 Food analyzer (image + text)',
-    '🔥 Detailed progress tracking',
-    '🎯 Custom fitness goals',
-    '📱 Premium app features'
-  ];
-  
-  const premiumFeatures = [
-    '🧠 AI Diet Coach (Premium GPT-4o)',
-    '📊 Personalized Indian meal plans', 
-    '🥗 Advanced food analyzer',
-    '🔥 Comprehensive progress analytics',
-    '📆 Smart meal scheduling',
-    '🧴 Hydration & fitness reminders',
-    '💎 Priority customer support',
-    '🎁 Exclusive premium content',
-    '📈 Advanced health reports',
-    '🎯 Personalized coaching sessions'
-  ];
-  
-  switch(planType) {
-    case 'basic':
-      return basicFeatures;
-    case 'pro':
-      return proFeatures;
-    case 'premium':
-      return premiumFeatures;
-    default:
-      return basicFeatures;
-  }
-}
-
 // Test UPI endpoint
 app.get('/test-upi', async (req, res) => {
   try {
     const upiIds = [
-      '9560448066@ptyes'
+      '9462153613@axl'
     ];
     
     const testUpiLink = `upi://pay?pa=${STATIC_UPI_ID}&pn=Test&am=1&cu=INR&tn=Test%20Payment&mc=0000&tr=${Date.now()}`;
@@ -441,14 +396,14 @@ app.get('/subscription-status/:phoneNumber/:paymentSessionId', (req, res) => {
     // Calculate expiry date (7 days for basic, 15 days for pro, 30 days for premium)
     let expiryDays;
     switch(pendingPayment.planType) {
-      case 'basic':
+      case 'weekly':
         expiryDays = 7;
         break;
-      case 'pro':
-        expiryDays = 15;
+      case 'monthly':
+        expiryDays = 30; // Assuming 30 days for monthly
         break;
-      case 'premium':
-        expiryDays = 30;
+      case 'lifetime':
+        expiryDays = 365; // Assuming 365 days for lifetime
         break;
       default:
         expiryDays = 7;
@@ -466,11 +421,7 @@ app.get('/subscription-status/:phoneNumber/:paymentSessionId', (req, res) => {
       transactionId: autoTransactionId,
       activatedAt: activatedAt.toISOString(),
       expiresAt: expiresAt.toISOString(),
-      status: 'active',
-      features: getPlanFeatures(pendingPayment.planType),
-      isActive: true,
-      startDate: activatedAt.toISOString(),
-      endDate: expiresAt.toISOString()
+      status: 'active'
     };
     
     // Store active subscription
@@ -479,7 +430,7 @@ app.get('/subscription-status/:phoneNumber/:paymentSessionId', (req, res) => {
     // Remove from pending payments
     pendingPayments.delete(paymentSessionId);
     
-    console.log(`✅ Plan auto-activated: ${phoneNumber} - ${pendingPayment.planType} plan via payment session`);
+    console.log(`✅ Plan auto-activated: ${phoneNumber} - ₹${pendingPayment.amount} via payment session`);
     console.log(`✅ Auto transaction ID used: ${autoTransactionId}`);
   }
   
